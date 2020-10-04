@@ -91,6 +91,7 @@ class CustomDataset(utils.Dataset):
         # Train or validation dataset?
         assert subset in ["train", "val"]
         dataset_dir = os.path.join(dataset_dir, subset)
+        dataset_dir+='/'
 
         # Load annotations
         # VGG Image Annotator (up to version 1.6) saves each image in the form:
@@ -114,7 +115,9 @@ class CustomDataset(utils.Dataset):
         # The VIA tool saves images in the JSON even if they don't have any
         # annotations. Skip unannotated images.
         annotations = [a for a in annotations if a['regions']]
-
+        
+        #print(annotations[0])
+        
         # Add images
         for a in annotations:
             # Get the x, y coordinaets of points of the polygons that make up
@@ -129,8 +132,12 @@ class CustomDataset(utils.Dataset):
             # load_mask() needs the image size to convert polygons to masks.
             # Unfortunately, VIA doesn't include it in JSON, so we must read
             # the image. This is only managable since the dataset is tiny.
+            
+            #print(dataset_dir+a['filename'])
+            
             image_path = os.path.join(dataset_dir, a['filename'])
-            image = skimage.io.imread(image_path)
+            print(image_path)
+            image = skimage.io.imread(image_path,plugin='matplotlib')
             height, width = image.shape[:2]
 
             self.add_image(
